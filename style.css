@@ -1,0 +1,36 @@
+body {
+  background-color: #03243d;
+  color: #fef6e4;
+  border-top: solid 30px #c9171e;
+  border-bottom: solid 30px #c9171e;
+  text-align: center;
+  margin: 0;
+  font-family: "Lobster", cursive;
+}
+
+h1 {
+  margin: 10px;
+  font-size: 50px;
+}
+
+button {
+  background-color: #8c7851;
+  color: #fef6e4;
+  font-size: 25px;
+  border: solid 3px #fef6e4;
+  border-radius: 10px;
+  width: 100px;
+  height: 40px;
+  margin: 10px;
+  font-family: "Lobster", cursive;
+}
+
+button:hover {
+  background-color: #3f3727;
+}
+
+p {
+  font-size: 30px;
+  margin-top: 0;
+  margin-bottom: 5px;
+}

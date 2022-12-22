@@ -1,0 +1,330 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>obniz×handpose</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+    <script src="https://obniz.com/js/jquery-3.2.1.min.js"></script>
+    <script src="https://unpkg.com/obniz/obniz.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+    </style>
+  </head>
+
+  <body>
+    <h1>～Light up the Christmas tree～</h1>
+    <p>Let's move your finger in front of the camera!</p>
+    <p>And let's say "Christmas" after clicking!</p>
+    <button id="mic">click</button>
+
+    <script>
+      //const obniz = new Obniz("6230-6894");
+      const obniz = new Obniz("9217-3100");
+      const LED_length = 15;
+      let leds;
+
+      let handpose;
+      let video;
+      let predictions = [];
+      let pose_btn;
+      let tree;
+
+      obniz.onconnect = async function () {
+        leds = obniz.wired("WS2812", { din: 26 });
+      };
+
+      function setup() {
+        createCanvas(640, 480);
+        video = createCapture(VIDEO);
+        video.size(width, height);
+
+        handpose = ml5.handpose(video, modelReady);
+
+        handpose.on("predict", (results) => {
+          predictions = results;
+        });
+
+        video.hide();
+      }
+
+      function modelReady() {
+        console.log("Model ready!");
+      }
+
+      function preload() {
+        tree = loadImage("img/tree.png");
+      }
+
+      function draw() {
+        image(video, 0, 0, width, height);
+        paint();
+        drawKeypoints();
+      }
+
+      function paint() {
+        image(tree, 100, 30, 450, 450);
+        noStroke();
+        circle(200, 300, 50);
+        circle(230, 230, 30);
+        circle(240, 400, 20);
+        circle(260, 340, 30);
+        circle(300, 210, 50);
+        circle(330, 370, 20);
+        circle(360, 260, 40);
+        circle(390, 390, 50);
+        circle(450, 300, 40);
+        circle(390, 210, 20);
+      }
+
+      function drawKeypoints() {
+        for (let i = 0; i < predictions.length; i += 1) {
+          const prediction = predictions[i];
+          for (let j = 0; j < prediction.landmarks.length; j += 1) {
+            const keypoint = prediction.landmarks[j];
+
+            const kyori =
+              (prediction.landmarks[8][0] - prediction.landmarks[4][0]) *
+              (prediction.landmarks[8][0] - prediction.landmarks[4][0]);
+            console.log(kyori);
+
+            let ledlist = [];
+            if (kyori < 500) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 1) {
+                  ledlist.push([0xff, 0xff, 0xff]);
+                  fill(255, 255, 255);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 1000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 2) {
+                  ledlist.push([0xff, 0xff, 0xcc]);
+                  fill(255, 255, 204);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 2000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 3) {
+                  ledlist.push([0xff, 0xcc, 0x99]);
+                  fill(255, 204, 153);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 3000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 4) {
+                  ledlist.push([0xff, 0xcc, 0xcc]);
+                  fill(255, 204, 204);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 4000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 5) {
+                  ledlist.push([0xff, 0x99, 0xcc]);
+                  fill(255, 153, 204);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 5000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 6) {
+                  ledlist.push([0xff, 0x99, 0x99]);
+                  fill(255, 153, 153);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 6000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 7) {
+                  ledlist.push([0xff, 0x66, 0x99]);
+                  fill(255, 102, 153);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 7000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 8) {
+                  ledlist.push([0xff, 0x66, 0xcc]);
+                  fill(255, 66, 204);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 8000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 9) {
+                  ledlist.push([0xff, 0x66, 0xff]);
+                  fill(255, 102, 255);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 9000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 10) {
+                  ledlist.push([0xff, 0x33, 0xff]);
+                  fill(255, 51, 255);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 10000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 11) {
+                  ledlist.push([0xff, 0x00, 0xff]);
+                  fill(255, 0, 255);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 20000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 12) {
+                  ledlist.push([0xff, 0x00, 0xcc]);
+                  fill(255, 0, 204);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 30000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 13) {
+                  ledlist.push([0xff, 0x00, 0x99]);
+                  fill(255, 0, 153);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else if (kyori < 40000) {
+              for (let i = 0; i < LED_length; i++) {
+                if (i < 14) {
+                  ledlist.push([0xff, 0x00, 0x33]);
+                  fill(255, 0, 51);
+                } else {
+                  ledlist.push([0x00, 0x00, 0x00]);
+                }
+              }
+            } else {
+              for (let i = 0; i < LED_length; i++) {
+                ledlist.push([0xff, 0x00, 0x00]);
+                fill(255, 0, 0);
+              }
+            }
+            leds.rgbs(ledlist);
+          }
+        }
+      }
+
+      //音声認識
+      const micDiv = document.querySelector("#mic");
+      let speakingtime = 0;
+
+      // 音声認識機能(Chrome)
+      let rec = new webkitSpeechRecognition();
+      let stopped = true;
+      rec.continuous = true;
+      rec.interimResults = false;
+      rec.lang = "ja-JP";
+
+      micDiv.onclick = function () {
+        if (stopped == true) {
+          stopped = false;
+          rec.start();
+        } else {
+          stopped = true;
+          rec.stop();
+        }
+      };
+
+      rec.onstart = function () {
+        console.log("on start");
+        speakingtime = 0;
+      };
+
+      rec.onend = function () {
+        console.log("on end");
+        if (stopped == false) {
+          setTimeout(function () {
+            rec.start();
+          }, speakingtime);
+        }
+      };
+
+      rec.onresult = function (e) {
+        rec.stop();
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          if (e.results[i].isFinal) {
+            console.log(e);
+            let text = e.results[i][0].transcript;
+            text = dialogue(text);
+            console.log(text);
+            speakingtime = text.length * 200;
+            console.log("estimate:", speakingtime, "ms");
+            speak(text);
+
+            let ledlist = [];
+            if (text == "メリークリスマス！") {
+              fill(random(255), random(255), random(255));
+              for (let i = 0; i < LED_length; i++) {
+                if (i % 2 == 0) {
+                  ledlist.push([0x00, 0x33, 0x00]);
+                } else {
+                  ledlist.push([0xcc, 0x00, 0x00]);
+                }
+              }
+            } else {
+              fill(random(255), random(255), random(255));
+              for (let i = 0; i < LED_length; i++) {
+                if (i % 2 == 0) {
+                  ledlist.push([0xff, 0xcc, 0x00]);
+                } else {
+                  ledlist.push([0x66, 0x00, 0x66]);
+                }
+              }
+            }
+            leds.rgbs(ledlist);
+          }
+        }
+      };
+
+      function dialogue(input) {
+        if (/クリスマス/.test(input)) {
+          return "メリークリスマス！";
+        } else {
+          return input;
+        }
+      }
+
+      // 発話機能をインスタンス化
+      let msg = new SpeechSynthesisUtterance();
+
+      function speak(text) {
+        msg.volume = 1.0; // 音量 min 0 ~ max 1
+        msg.rate = 1.0; // 速度 min 0 ~ max 10
+        msg.pitch = 1.0; // 音程 min 0 ~ max 2
+
+        msg.text = text; // 喋る内容
+        msg.lang = "ja-JP"; // en-US or ja-JP
+
+        // 発話実行
+        speechSynthesis.speak(msg);
+      }
+
+      // 終了時の処理
+      msg.onend = function (event) {
+        console.log("喋った時間：" + event.elapsedTime + "ms");
+      };
+    </script>
+  </body>
+</html>
